@@ -1,0 +1,3 @@
+[submodule "sparkexample"]
+	path = sparkexample
+	url = https://github.com/Altiscale/sparkexample.git
