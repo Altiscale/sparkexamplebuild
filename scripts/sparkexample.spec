@@ -1,37 +1,26 @@
-%global apache_name           SPARKEXAMPLE_PKG_NAME
-
-%define production_release    PRODUCTION_RELEASE
-%define git_hash_release      GITHASH_REV_RELEASE
-%define altiscale_release_ver ALTISCALE_RELEASE
 %define parent_rpm_pkg_name   alti-spark
-%define spark_version         SPARK_VERSION_REPLACE
-%define current_workspace     CURRENT_WORKSPACE_REPLACE
-%define hadoop_version        HADOOP_VERSION_REPLACE
-%define hadoop_build_version  HADOOP_BUILD_VERSION_REPLACE
-%define hive_version          HIVE_VERSION_REPLACE
-%define scala_build_version   SCALA_BUILD_VERSION_REPLACE
 %define build_service_name    alti-sparkexample
-%define spark_folder_name     %{parent_rpm_pkg_name}-%{spark_version}
+%define spark_folder_name     %{parent_rpm_pkg_name}-%{_spark_version}
 %define spark_testsuite_name  %{spark_folder_name}
 %define install_spark_label   /opt/%{spark_testsuite_name}/test_spark/VERSION
 %define install_spark_test    /opt/%{spark_testsuite_name}/test_spark
 %define build_release         BUILD_TIME
 
-Name: %{parent_rpm_pkg_name}-%{spark_version}-example
-Summary: The Altiscale spark example provided for Spark 2.0+, requires %{parent_rpm_pkg_name}-%{spark_version} RPM to be installed first.
-Version: %{spark_version}
+Name: %{parent_rpm_pkg_name}-%{_spark_version}-example
+Summary: The Altiscale spark example provided for Spark 2.0+, requires %{parent_rpm_pkg_name}-%{_spark_version} RPM to be installed first.
+Version: %{_spark_version}
 # Keep the format here for backward compatibility
-Release: %{altiscale_release_ver}.%{build_release}%{?dist}
+Release: %{_altiscale_release_ver}.%{_build_release}%{?dist}
 License: Apache Software License 2.0
 Group: Development/Libraries
 Source: %{_sourcedir}/%{build_service_name}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{release}-root-%{build_service_name}
 Requires(pre): shadow-utils
 Requires: scala = 2.11.8
-Requires: %{parent_rpm_pkg_name}-%{spark_version}
-BuildRequires: %{parent_rpm_pkg_name}-%{spark_version}
-BuildRequires: %{parent_rpm_pkg_name}-%{spark_version}-devel
-# BuildRequires: vcc-hive-%{hive_version}
+Requires: %{parent_rpm_pkg_name}-%{_spark_version}
+BuildRequires: %{parent_rpm_pkg_name}-%{_spark_version}
+BuildRequires: %{parent_rpm_pkg_name}-%{_spark_version}-devel
+# BuildRequires: vcc-hive-%{_hive_version}
 BuildRequires: scala = 2.11.8
 BuildRequires: apache-maven >= 3.3.9
 BuildRequires: jdk >= 1.7.0.51
@@ -42,8 +31,8 @@ Url: http://spark.apache.org/
 %description
 Build from https://github.com/Altiscale/sparkexample/tree/branch-2.0-alti with 
 build script https://github.com/Altiscale/sparkexamplebuild/tree/branch-2.0-alti
-This provides Altiscale test case around Spark starting from Spark %{spark_version}
-in its own RPM %{parent_rpm_pkg_name}-%{spark_version}-example
+This provides Altiscale test case around Spark starting from Spark %{_spark_version}
+in its own RPM %{parent_rpm_pkg_name}-%{_spark_version}-example
 
 %pre
 
@@ -77,40 +66,35 @@ echo "build - entire spark project in %{_builddir}"
 pushd `pwd`
 pushd %{_builddir}/%{build_service_name}/
 
-if [ "x%{hadoop_version}" = "x" ] ; then
+if [ "x%{_hadoop_version}" = "x" ] ; then
   echo "fatal - HADOOP_VERSION needs to be set, can't build anything, exiting"
   exit -8
 else
-  export SPARK_HADOOP_VERSION=%{hadoop_version}
+  export SPARK_HADOOP_VERSION=%{_hadoop_version}
   echo "ok - applying customized hadoop version $SPARK_HADOOP_VERSION"
 fi
 
-if [ "x%{hadoop_build_version}" = "x" ] ; then
-  echo "fatal - hadoop_build_version needs to be set, can't build anything, exiting"
-  exit -8
-fi
-
-if [ "x%{hive_version}" = "x" ] ; then
+if [ "x%{_hive_version}" = "x" ] ; then
   echo "fatal - HIVE_VERSION needs to be set, can't build anything, exiting"
   exit -8
 else
-  export SPARK_HIVE_VERSION=%{hive_version}
+  export SPARK_HIVE_VERSION=%{_hive_version}
   echo "ok - applying customized hive version $SPARK_HIVE_VERSION"
 fi
 
 env | sort
 
-echo "ok - building assembly with HADOOP_VERSION=$SPARK_HADOOP_VERSION HIVE_VERSION=$SPARK_HIVE_VERSION scala=scala-%{scala_build_version}"
+echo "ok - building assembly with HADOOP_VERSION=$SPARK_HADOOP_VERSION HIVE_VERSION=$SPARK_HIVE_VERSION scala=scala-%{_scala_build_version}"
 
 hadoop_profile_str=""
 testcase_hadoop_profile_str=""
-if [[ %{hadoop_version} == 2.4.* ]] ; then
+if [[ %{_hadoop_version} == 2.4.* ]] ; then
   hadoop_profile_str="-Phadoop-2.4"
   testcase_hadoop_profile_str="-Phadoop24-provided"
-elif [[ %{hadoop_version} == 2.6.* ]] ; then
+elif [[ %{_hadoop_version} == 2.6.* ]] ; then
   hadoop_profile_str="-Phadoop-2.6"
   testcase_hadoop_profile_str="-Phadoop26-provided"
-elif [[ %{hadoop_version} == 2.7.* ]] ; then
+elif [[ %{_hadoop_version} == 2.7.* ]] ; then
   hadoop_profile_str="-Phadoop-2.7"
   testcase_hadoop_profile_str="-Phadoop27-provided"
 else
@@ -118,15 +102,22 @@ else
   exit -9
 fi
 xml_setting_str=""
-if [ -f /etc/alti-maven-settings/settings.xml ] ; then
-  echo "ok - applying local maven repo settings.xml for first priority"
+
+if [ -f %{_mvn_settings} ] ; then
+  echo "ok - picking up %{_mvn_settings}"
+  xml_setting_str="--settings %{_mvn_settings} --global-settings %{_mvn_settings}"
+elif [ -f %{_builddir}/.m2/settings.xml ] ; then
+  echo "ok - picking up %{_builddir}/.m2/settings.xml"
+  xml_setting_str="--settings %{_builddir}/.m2/settings.xml --global-settings %{_builddir}/.m2/settings.xml"
+elif [ -f /etc/alti-maven-settings/settings.xml ] ; then
+  echo "ok - applying local installed maven repo settings.xml for first priority"
   xml_setting_str="--settings /etc/alti-maven-settings/settings.xml --global-settings /etc/alti-maven-settings/settings.xml"
 else
-  echo "ok - applying default repository form pom.xml"
+  echo "ok - applying default repository from pom.xml"
   xml_setting_str=""
 fi
 
-echo "ok - local repository will be installed under %{current_workspace}/.m2/repository"
+echo "ok - local repository will be installed under %{_current_workspace}/.m2/repository"
 # TODO: Install local JARs to local repo so we apply the latest built assembly JARs from above
 # This is a workaround(hack). A better way is to deploy it to SNAPSHOT on Archiva via maven-deploy plugin,
 # and include it in the test_case pom.xml. This is really annoying.
@@ -134,23 +125,25 @@ echo "ok - local repository will be installed under %{current_workspace}/.m2/rep
 # In mock environment, .m2 may end up somewhere differently, use default in mock.
 # explicitly if we detect .m2/repository in local sandbox, etc.
 mvn_install_target_repo=""
-if [ -d "%{current_workspace}/.m2" ] ; then
-  mvn_install_target_repo="-DlocalRepositoryPath=%{current_workspace}/.m2/repository"
+if [ -d "%{_current_workspace}/.m2" ] ; then
+  mvn_install_target_repo="-DlocalRepositoryPath=%{_current_workspace}/.m2/repository"
 fi
 
+
+mvn_install_cmd="mvn -U org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file -Duserdef.spark.version=%{_spark_version} -Duserdef.hadoop.version=%{_hadoop_version} -Dversion=%{_spark_version} -Dpackaging=jar -DgroupId=local.org.apache.spark"
 # This applies to local integration with Spark assembly JARs
-mvn -U org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file -Dfile=/opt/%{parent_rpm_pkg_name}-%{spark_version}/core/target/spark-core_%{scala_build_version}-%{spark_version}.jar -DgroupId=local.org.apache.spark -DartifactId=spark-core_%{scala_build_version} -Dversion=%{spark_version} -Dpackaging=jar $mvn_install_target_repo
+$mvn_install_cmd -Dfile=/opt/%{parent_rpm_pkg_name}-%{_spark_version}/core/target/spark-core_%{_scala_build_version}-%{_spark_version}.jar -DartifactId=spark-core_%{_scala_build_version} $mvn_install_target_repo
 
 # For Kafka Spark Streaming Examples
-mvn -U org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file -Dfile=/opt/%{parent_rpm_pkg_name}-%{spark_version}/external/kafka-0-8/target/spark-streaming-kafka-0-8_%{scala_build_version}-%{spark_version}.jar -DgroupId=local.org.apache.spark -DartifactId=spark-streaming-kafka-0-8_%{scala_build_version} -Dversion=%{spark_version} -Dpackaging=jar $mvn_install_target_repo
+$mvn_install_cmd -Dfile=/opt/%{parent_rpm_pkg_name}-%{_spark_version}/external/kafka-0-8/target/spark-streaming-kafka-0-8_%{_scala_build_version}-%{_spark_version}.jar -DartifactId=spark-streaming-kafka-0-8_%{_scala_build_version} $mvn_install_target_repo
 
-mvn -U org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file -Dfile=/opt/%{parent_rpm_pkg_name}-%{spark_version}/streaming/target/spark-streaming_%{scala_build_version}-%{spark_version}.jar -DgroupId=local.org.apache.spark -DartifactId=spark-streaming_%{scala_build_version} -Dversion=%{spark_version} -Dpackaging=jar $mvn_install_target_repo
+$mvn_install_cmd -Dfile=/opt/%{parent_rpm_pkg_name}-%{_spark_version}/streaming/target/spark-streaming_%{_scala_build_version}-%{_spark_version}.jar -DartifactId=spark-streaming_%{_scala_build_version} $mvn_install_target_repo
 
 # For SparkSQL Hive integration examples, this is required when you use -Phive-provided
 # spark-hive JAR needs to be provided to the test case in this case.
-mvn -U org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file -Dfile=/opt/%{parent_rpm_pkg_name}-%{spark_version}/sql/core/target/spark-sql_%{scala_build_version}-%{spark_version}.jar -DgroupId=local.org.apache.spark -DartifactId=spark-sql_%{scala_build_version} -Dversion=%{spark_version} -Dpackaging=jar $mvn_install_target_repo
-mvn -U org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file -Dfile=/opt/%{parent_rpm_pkg_name}-%{spark_version}/sql/catalyst/target/spark-catalyst_%{scala_build_version}-%{spark_version}.jar -DgroupId=local.org.apache.spark -DartifactId=spark-catalyst_%{scala_build_version} -Dversion=%{spark_version} -Dpackaging=jar $mvn_install_target_repo
-mvn -U org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file -Dfile=/opt/%{parent_rpm_pkg_name}-%{spark_version}/sql/hive/target/spark-hive_%{scala_build_version}-%{spark_version}.jar -DgroupId=local.org.apache.spark -DartifactId=spark-hive_%{scala_build_version} -Dversion=%{spark_version} -Dpackaging=jar $mvn_install_target_repo
+$mvn_install_cmd -Dfile=/opt/%{parent_rpm_pkg_name}-%{_spark_version}/sql/core/target/spark-sql_%{_scala_build_version}-%{_spark_version}.jar -DartifactId=spark-sql_%{_scala_build_version} $mvn_install_target_repo
+$mvn_install_cmd -Dfile=/opt/%{parent_rpm_pkg_name}-%{_spark_version}/sql/catalyst/target/spark-catalyst_%{_scala_build_version}-%{_spark_version}.jar -DartifactId=spark-catalyst_%{_scala_build_version} $mvn_install_target_repo
+$mvn_install_cmd -Dfile=/opt/%{parent_rpm_pkg_name}-%{_spark_version}/sql/hive/target/spark-hive_%{_scala_build_version}-%{_spark_version}.jar -DartifactId=spark-hive_%{_scala_build_version} $mvn_install_target_repo
 
 # Build our test case with our own pom.xml file
 # Update profile ID spark-1.4 for 1.4.1, spark-1.5 for 1.5.2, spark-1.6 for 1.6.0, and hadoop version hadoop24-provided or hadoop27-provided as well
@@ -168,12 +161,13 @@ echo "test install spark dest = %{buildroot}/%{install_spark_test}"
 %{__mkdir} -p %{buildroot}%{install_spark_test}
 
 # This will capture the installation property form this spec file for further references
+%{__mkdir} -p %{buildroot}/opt/%{spark_testsuite_name}/test_spark/
 rm -f %{buildroot}/%{install_spark_label}
 touch %{buildroot}/%{install_spark_label}
 echo "name=%{name}" >> %{buildroot}/%{install_spark_label}
-echo "version=%{spark_version}" >> %{buildroot}/%{install_spark_label}
+echo "version=%{_spark_version}" >> %{buildroot}/%{install_spark_label}
 echo "release=%{name}-%{release}" >> %{buildroot}/%{install_spark_label}
-echo "git_rev=%{git_hash_release}" >> %{buildroot}/%{install_spark_label}
+echo "git_rev=%{_git_hash_release}" >> %{buildroot}/%{install_spark_label}
 
 # deploy test suite and scripts
 cp -rp %{_builddir}/%{build_service_name}/* %{buildroot}/%{install_spark_test}/
