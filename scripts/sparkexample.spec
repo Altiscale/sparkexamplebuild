@@ -158,6 +158,8 @@ echo "release=%{name}-%{release}" >> %{buildroot}/%{install_spark_label}
 echo "git_rev=%{_git_hash_release}" >> %{buildroot}/%{install_spark_label}
 
 # deploy test suite and scripts
+cp -rp %{_builddir}/%{build_service_name}/target/*.jar %{buildroot}/%{install_spark_test}/
+rm -rf %{_builddir}/%{build_service_name}/target
 cp -rp %{_builddir}/%{build_service_name}/* %{buildroot}/%{install_spark_test}/
 
 %clean
