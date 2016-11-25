@@ -29,8 +29,8 @@ BuildRequires: vcc-R_3.0.3
 
 Url: http://spark.apache.org/
 %description
-Build from https://github.com/Altiscale/sparkexample/tree/branch-2.0-alti with 
-build script https://github.com/Altiscale/sparkexamplebuild/tree/branch-2.0-alti
+Build from https://github.com/Altiscale/sparkexample/tree/branch-%{_spark_version}-alti with 
+build script https://github.com/Altiscale/sparkexamplebuild/tree/branch-%{_spark_version}-alti
 This provides Altiscale test case around Spark starting from Spark %{_spark_version}
 in its own RPM %{parent_rpm_pkg_name}-%{_spark_version}-example
 
