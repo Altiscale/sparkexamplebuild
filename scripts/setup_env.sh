@@ -19,7 +19,7 @@ export PATH=$PATH:$M2_HOME/bin:$SCALA_HOME/bin:$ANT_HOME/bin:$JAVA_HOME/bin:$R_H
 # Define default spark uid:gid and build version
 # and all other Spark build related env
 export SPARKEXAMPLE_PKG_NAME=${SPARKEXAMPLE_PKG_NAME:-"sparkexample"}
-export SPARK_VERSION=${SPARK_VERSION:-"1.6.2"}
+export SPARK_VERSION=${SPARK_VERSION:-"1.6.3"}
 export SCALA_VERSION=${SCALA_VERSION:-"2.10"}
 
 # After AE-1667, no longer need to specify Hadoop and Hive version.
