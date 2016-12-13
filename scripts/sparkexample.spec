@@ -4,6 +4,7 @@
 %define spark_testsuite_name  %{spark_folder_name}
 %define install_spark_label   /opt/%{spark_testsuite_name}/test_spark/VERSION
 %define install_spark_test    /opt/%{spark_testsuite_name}/test_spark
+%define install_spark_utils   /opt/%{spark_testsuite_name}/bin
 
 Name: %{parent_rpm_pkg_name}-%{_spark_version}-example
 Summary: The Altiscale spark example provided for Spark 1.6.2, requires %{parent_rpm_pkg_name}-%{_spark_version} RPM to be installed first.
@@ -148,6 +149,7 @@ echo "compiled/built folder is (not the same as buildroot) RPM_BUILD_DIR = %{_bu
 echo "test installtion folder (aka buildroot) is RPM_BUILD_ROOT = %{buildroot}"
 echo "test install spark dest = %{buildroot}/%{install_spark_test}"
 %{__mkdir} -p %{buildroot}%{install_spark_test}
+%{__mkdir} -p %{buildroot}%{install_spark_utils}
 
 # This will capture the installation property form this spec file for further references
 rm -f %{buildroot}/%{install_spark_label}
@@ -161,6 +163,7 @@ echo "git_rev=%{_git_hash_release}" >> %{buildroot}/%{install_spark_label}
 cp -rp %{_builddir}/%{build_service_name}/target/*.jar %{buildroot}/%{install_spark_test}/
 rm -rf %{_builddir}/%{build_service_name}/target
 cp -rp %{_builddir}/%{build_service_name}/* %{buildroot}/%{install_spark_test}/
+cp -rp %{_builddir}/%{build_service_name}/bin/* %{buildroot}/%{install_spark_utils}/
 
 %clean
 echo "ok - cleaning up temporary files, deleting %{buildroot}%{install_spark_test}"
@@ -169,6 +172,8 @@ rm -rf %{buildroot}%{install_spark_test}
 %files
 %defattr(0755,root,root,0755)
 %{install_spark_test}
+%{install_spark_utils}/alti-spark-sql
+%{install_spark_utils}/alti-spark-shell
 
 %post
 if [ "$1" = "1" ]; then
