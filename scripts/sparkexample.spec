@@ -17,7 +17,7 @@ Source: %{_sourcedir}/%{build_service_name}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{release}-root-%{build_service_name}
 Requires(pre): shadow-utils
 Requires: scala = 2.11.8
-Requires: %{parent_rpm_pkg_name}-%{_spark_version}
+# Requires: %{parent_rpm_pkg_name}-%{_spark_version}
 BuildRequires: %{parent_rpm_pkg_name}-%{_spark_version}
 BuildRequires: %{parent_rpm_pkg_name}-%{_spark_version}-devel
 # BuildRequires: vcc-hive-%{_hive_version}
