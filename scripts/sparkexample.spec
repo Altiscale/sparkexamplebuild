@@ -147,7 +147,7 @@ $mvn_install_cmd -Dfile=/opt/%{parent_rpm_pkg_name}-%{_spark_version}/sql/hive/t
 
 # Build our test case with our own pom.xml file
 # Update profile ID spark-1.4 for 1.4.1, spark-1.5 for 1.5.2, spark-1.6 for 1.6.0, and hadoop version hadoop24-provided or hadoop27-provided as well
-mvn -U package -Pspark-2.0 -Pkafka-provided $testcase_hadoop_profile_str
+mvn -U package -Pspark-2.1 -Pkafka-provided $testcase_hadoop_profile_str
 popd
 echo "ok - build spark example and test case completed successfully!"
 popd
@@ -204,5 +204,7 @@ fi
 # Don't delete the users after uninstallation.
 
 %changelog
+* Thu Jan 5 2017 Andrew Lee 20170105
+- Initial Creation of spec file for Spark 2.1.0 Examples
 * Tue Aug 2 2016 Andrew Lee 20160802
 - Initial Creation of spec file for Spark 2.0.0 Examples
