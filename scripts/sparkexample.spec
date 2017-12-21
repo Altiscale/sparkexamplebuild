@@ -147,7 +147,7 @@ $mvn_install_cmd -Dfile=/opt/%{parent_rpm_pkg_name}-%{_spark_version}/sql/hive/t
 
 # Build our test case with our own pom.xml file
 # Update profile ID spark-1.4 for 1.4.1, spark-1.5 for 1.5.2, spark-1.6 for 1.6.0, and hadoop version hadoop24-provided or hadoop27-provided as well
-mvn -U package -Pspark-2.1 -Pkafka-provided $testcase_hadoop_profile_str
+mvn -U package -Pspark-2.2 -Pkafka-provided $testcase_hadoop_profile_str
 popd
 echo "ok - build spark example and test case completed successfully!"
 popd
