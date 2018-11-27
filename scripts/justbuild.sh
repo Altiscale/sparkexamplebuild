@@ -130,9 +130,9 @@ $mvn_install_cmd -Dfile=/opt/alti-spark-${SPARK_VERSION}/common/tags/target/spar
 
 DEBUG_MAVEN=${DEBUG_MAVEN:-"false"}
 if [ "x${DEBUG_MAVEN}" = "xtrue" ] ; then
-  mvn_cmd="mvn -U -X package -Pspark-2.2 -Pkafka-provided $testcase_hadoop_profile_str"
+  mvn_cmd="mvn -U -X package -Pspark-2.3 -Pkafka-provided $testcase_hadoop_profile_str"
 else
-  mvn_cmd="mvn -U package -Pspark-2.2 -Pkafka-provided $testcase_hadoop_profile_str"
+  mvn_cmd="mvn -U package -Pspark-2.3 -Pkafka-provided $testcase_hadoop_profile_str"
 fi
 
 echo "$mvn_cmd"
