@@ -109,7 +109,7 @@ mvn_install_cmd="mvn -U org.apache.maven.plugins:maven-install-plugin:2.5.2:inst
 $mvn_install_cmd -Dfile=/opt/alti-spark-${SPARK_VERSION}/core/target/spark-core_${SCALA_VERSION}-${SPARK_VERSION}.jar -DartifactId=spark-core_${SCALA_VERSION} $mvn_install_target_repo
 
 # For Kafka Spark Streaming Examples
-$mvn_install_cmd -Dfile=/opt/alti-spark-${SPARK_VERSION}/external/kafka-0-8/target/spark-streaming-kafka-0-8_${SCALA_VERSION}-${SPARK_VERSION}.jar -DartifactId=spark-streaming-kafka-0-8_${SCALA_VERSION} $mvn_install_target_repo
+$mvn_install_cmd -Dfile=/opt/alti-spark-${SPARK_VERSION}/external/kafka-0-8/target/spark-streaming-kafka-0-10_${SCALA_VERSION}-${SPARK_VERSION}.jar -DartifactId=spark-streaming-kafka-0-10_${SCALA_VERSION} $mvn_install_target_repo
 
 # $mvn_install_cmd -Dfile=/opt/alti-spark-${SPARK_VERSION}/external/kafka-0-10/target/spark-streaming-kafka-0-10_${SCALA_VERSION}-${SPARK_VERSION}.jar -DartifactId=spark-streaming-kafka-0-10_${SCALA_VERSION} $mvn_install_target_repo
 
