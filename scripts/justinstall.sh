@@ -16,13 +16,13 @@ sparkexample_git_dir=$WORKSPACE/sparkexample
 env | sort
 
 ALTISCALE_RELEASE=${ALTISCALE_RELEASE:-"4.3.0"}
-export RPM_NAME=`echo alti-spark-${SPARK_VERSION}-example-${SPARK_VERSION}`
+export RPM_NAME=`echo alti-spark-${SPARK_VERSION}-example`
 export RPM_DESCRIPTION="Apache Spark Examples ${SPARK_VERSION}\n\n${DESCRIPTION}"
 
 #####################
 # Spark Example RPM #
 #####################
-echo "Packaging sparkexample rpm with name ${RPM_NAME} with version ${ALTISCALE_VERSION}-${DATE_STRING}"
+echo "Packaging sparkexample rpm with name ${RPM_NAME} with version ${SPARK_VERSION}-${ALTISCALE_RELEASE}.${DATE_STRING}"
 
 export RPM_BUILD_DIR="${INSTALL_DIR}/opt/alti-spark-${SPARK_VERSION}/test_spark"
 # Generate RPM based on where spark artifacts are placed from previous steps
@@ -60,8 +60,8 @@ fpm --verbose \
 -s dir \
 -t rpm \
 -n ${RPM_NAME} \
--v ${ALTISCALE_RELEASE} \
---iteration ${DATE_STRING} \
+-v ${SPARK_VERSION} \
+--iteration ${ALTISCALE_RELEASE}.${DATE_STRING} \
 --rpm-user root \
 --rpm-group root \
 --rpm-auto-add-directories \
