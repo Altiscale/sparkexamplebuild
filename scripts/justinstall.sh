@@ -16,7 +16,7 @@ sparkexample_git_dir=$WORKSPACE/sparkexample
 env | sort
 
 ALTISCALE_RELEASE=${ALTISCALE_RELEASE:-"4.3.0"}
-export RPM_NAME=`echo alti-spark-${SPARK_VERSION}-example`
+export RPM_NAME=`echo alti-spark-${SPARK_VERSION}-example-${SPARK_VERSION}`
 export RPM_DESCRIPTION="Apache Spark Examples ${SPARK_VERSION}\n\n${DESCRIPTION}"
 
 #####################
