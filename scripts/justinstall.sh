@@ -55,8 +55,6 @@ fpm --verbose \
 --rpm-os linux \
 --architecture all \
 --category "Development/Libraries" \
--d alti-spark-$SPARK_VERSION \
--d alti-spark-$SPARK_VERSION-devel \
 -s dir \
 -t rpm \
 -n ${RPM_NAME} \
